@@ -1,0 +1,48 @@
+name: Go
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+
+
+    - name: Test mattes/log
+      run: go test -mod vendor -v .
+
+
+    - name: Test Slack
+      env:
+        SLACK_URL: ${{ secrets.SLACK_URL }}
+        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      working-directory: ./slack
+      run: go test -mod vendor -v .
+
+
+    - name: Test Google Stackdriver
+      env:
+        GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+      working-directory: ./googleStackdriver
+      run: |
+        echo '${{secrets.GOOGLE_PROJECT_CREDS}}' > .credentials.json
+        go test -mod vendor -v .
+
+
+    - name: Test Google Error Reporting
+      env:
+        GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+      working-directory: ./googleErrorReporting
+      run: |
+        echo '${{secrets.GOOGLE_PROJECT_CREDS}}' > .credentials.json
+        go test -mod vendor -v .
+
