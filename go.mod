@@ -3,8 +3,10 @@ module github.com/mattes/log
 go 1.13
 
 require (
-	go.uber.org/multierr v1.4.0 // indirect
+	cloud.google.com/go v0.48.0 // indirect
+	github.com/mattes/log/googleErrorReporting v0.0.0-20191110082208-bd344d6f2590 // indirect
+	github.com/mattes/log/googleStackdriver v0.0.0-20191110082208-bd344d6f2590 // indirect
+	github.com/mattes/log/slack v0.0.0-20191110082208-bd344d6f2590 // indirect
 	go.uber.org/zap v1.12.0
-	golang.org/x/tools v0.0.0-20191109212701-97ad0ed33101 // indirect
 	gopkg.in/yaml.v2 v2.2.5 // indirect
 )

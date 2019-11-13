@@ -74,6 +74,7 @@ func init() {
 
 func main() {
   defer log.Sync()
+  defer log.CapturePanic() // optional, it logs unhandled panics before crashing
 
   log.Error("Hello Production!")
 }
