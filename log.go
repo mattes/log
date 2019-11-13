@@ -38,6 +38,6 @@ func Use(logger *zap.Logger) {
 func CapturePanic() {
 	if r := recover(); r != nil {
 		l := defaultLogger.WithOptions(zap.AddCallerSkip(1))
-		l.Sugar().Panic(r)
+		l.Sugar().Panic(r) // no need to sync, this happens in core automatically
 	}
 }
