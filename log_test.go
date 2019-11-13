@@ -11,7 +11,7 @@ import (
 // setTestLogger sets the global defaultLogger to a test logger
 // options set here should resemble default logger options
 func setTestLogger() *observer.ObservedLogs {
-	core, obs := observer.New(zapcore.PanicLevel)
+	core, obs := observer.New(zapcore.DebugLevel)
 	logger := zap.New(core).WithOptions(
 		zap.AddCaller(),
 		zap.AddCallerSkip(1),
