@@ -237,7 +237,7 @@ func trimStack(s []byte) []byte {
 }
 
 // customField returns a zapcore.Field that is skipped by other cores,
-// and only has special meaning to his core.
+// and only has special meaning to this core.
 func customField(key string, v interface{}) zapcore.Field {
 	return zapcore.Field{
 		Key:       key,
