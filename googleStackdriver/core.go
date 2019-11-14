@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"runtime"
-	"strings"
 	"time"
 
 	"cloud.google.com/go/logging"
@@ -46,51 +45,51 @@ const (
 )
 
 func Request(r *http.Request) zapcore.Field {
-	return zap.Any(requestFieldKey, r)
+	return customField(requestFieldKey, r)
 }
 
 func RequestSize(size int64) zapcore.Field {
-	return zap.Int64(requestSizeFieldKey, size)
+	return customField(requestSizeFieldKey, size)
 }
 
 func RequestStatus(status int) zapcore.Field {
-	return zap.Int(requestStatusFieldKey, status)
+	return customField(requestStatusFieldKey, status)
 }
 
 func RequestResponseSize(size int64) zapcore.Field {
-	return zap.Int64(requestResponseSizeFieldKey, size)
+	return customField(requestResponseSizeFieldKey, size)
 }
 
 func RequestLatency(latency time.Duration) zapcore.Field {
-	return zap.Duration(requestLatencyFieldKey, latency)
+	return customField(requestLatencyFieldKey, latency)
 }
 
 func RequestLocalIP(ip string) zapcore.Field {
-	return zap.String(requestLocalIPFieldKey, ip)
+	return customField(requestLocalIPFieldKey, ip)
 }
 
 func RequestRemoteIP(ip string) zapcore.Field {
-	return zap.String(requestRemoteIPFieldKey, ip)
+	return customField(requestRemoteIPFieldKey, ip)
 }
 
 func RequestCacheHit(hit bool) zapcore.Field {
-	return zap.Bool(requestCacheHitFieldKey, hit)
+	return customField(requestCacheHitFieldKey, hit)
 }
 
 func RequestCacheValidatedWithOriginServer(validated bool) zapcore.Field {
-	return zap.Bool(requestCacheValidatedWithOriginServerFieldKey, validated)
+	return customField(requestCacheValidatedWithOriginServerFieldKey, validated)
 }
 
 func Trace(trace string) zapcore.Field {
-	return zap.String(traceFieldKey, trace)
+	return customField(traceFieldKey, trace)
 }
 
 func TraceSampled(sampled bool) zapcore.Field {
-	return zap.Bool(traceSampledFieldKey, sampled)
+	return customField(traceSampledFieldKey, sampled)
 }
 
 func SpanID(id string) zapcore.Field {
-	return zap.String(spanIDFieldKey, id)
+	return customField(spanIDFieldKey, id)
 }
 
 type Config struct {
@@ -292,74 +291,55 @@ func (c *core) Write(entry zapcore.Entry, fields []zapcore.Field) error {
 	}
 
 	e.HTTPRequest = &logging.HTTPRequest{Request: &http.Request{URL: &url.URL{}}}
-	var f *zapcore.Field
 	httpRequestSet := false
 
-	fields, f = filterFields(requestFieldKey, fields)
-	if f != nil {
-		if v, ok := f.Interface.(*http.Request); ok {
-			e.HTTPRequest.Request = v
+	for _, f := range fields {
+		switch f.Key {
+
+		case requestFieldKey:
+			e.HTTPRequest.Request = f.Interface.(*http.Request)
 			httpRequestSet = true
-		} else {
-			panic(fmt.Sprintf("expected *http.Request for field with key '%v'", requestFieldKey))
-		}
-	}
 
-	fields, f = filterFields(requestSizeFieldKey, fields)
-	if f != nil {
-		e.HTTPRequest.RequestSize = f.Integer
-		httpRequestSet = true
-	}
+		case requestSizeFieldKey:
+			e.HTTPRequest.RequestSize = f.Interface.(int64)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestStatusFieldKey, fields)
-	if f != nil {
-		e.HTTPRequest.Status = int(f.Integer)
-		httpRequestSet = true
-	}
+		case requestStatusFieldKey:
+			e.HTTPRequest.Status = f.Interface.(int)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestResponseSizeFieldKey, fields)
-	if f != nil {
-		e.HTTPRequest.ResponseSize = f.Integer
-		httpRequestSet = true
-	}
+		case requestResponseSizeFieldKey:
+			e.HTTPRequest.ResponseSize = f.Interface.(int64)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestLatencyFieldKey, fields)
-	if f != nil {
-		e.HTTPRequest.Latency = time.Duration(f.Integer)
-		httpRequestSet = true
-	}
+		case requestLatencyFieldKey:
+			e.HTTPRequest.Latency = f.Interface.(time.Duration)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestLocalIPFieldKey, fields)
-	if f != nil {
-		e.HTTPRequest.LocalIP = f.String
-		httpRequestSet = true
-	}
+		case requestLocalIPFieldKey:
+			e.HTTPRequest.LocalIP = f.Interface.(string)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestRemoteIPFieldKey, fields)
-	if f != nil {
-		e.HTTPRequest.RemoteIP = f.String
-		httpRequestSet = true
-	}
+		case requestRemoteIPFieldKey:
+			e.HTTPRequest.RemoteIP = f.Interface.(string)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestCacheHitFieldKey, fields)
-	if f != nil {
-		if f.Type != zapcore.BoolType {
-			panic(fmt.Sprintf("expected bool for field with key '%v'", requestCacheHitFieldKey))
-		}
-		httpRequestSet = true
-		if f.Integer == 1 {
-			e.HTTPRequest.CacheHit = true
-		}
-	}
+		case requestCacheHitFieldKey:
+			e.HTTPRequest.CacheHit = f.Interface.(bool)
+			httpRequestSet = true
 
-	fields, f = filterFields(requestCacheValidatedWithOriginServerFieldKey, fields)
-	if f != nil {
-		if f.Type != zapcore.BoolType {
-			panic(fmt.Sprintf("expected bool for field with key '%v'", requestCacheValidatedWithOriginServerFieldKey))
-		}
-		httpRequestSet = true
-		if f.Integer == 1 {
-			e.HTTPRequest.CacheValidatedWithOriginServer = true
+		case requestCacheValidatedWithOriginServerFieldKey:
+			e.HTTPRequest.CacheValidatedWithOriginServer = f.Interface.(bool)
+			httpRequestSet = true
+
+		case traceFieldKey:
+			e.Trace = f.Interface.(string)
+
+		case traceSampledFieldKey:
+			e.TraceSampled = f.Interface.(bool)
+
+		case spanIDFieldKey:
+			e.SpanID = f.Interface.(string)
 		}
 	}
 
@@ -367,29 +347,8 @@ func (c *core) Write(entry zapcore.Entry, fields []zapcore.Field) error {
 		e.HTTPRequest = nil
 	}
 
-	fields, f = filterFields(traceFieldKey, fields)
-	if f != nil {
-		e.Trace = f.String
-	}
-
-	fields, f = filterFields(traceSampledFieldKey, fields)
-	if f != nil {
-		if f.Type != zapcore.BoolType {
-			panic(fmt.Sprintf("expected bool for field with key '%v'", traceSampledFieldKey))
-		}
-		if f.Integer == 1 {
-			e.TraceSampled = true
-		}
-	}
-
-	fields, f = filterFields(spanIDFieldKey, fields)
-	if f != nil {
-		e.SpanID = f.String
-	}
-
 	// marshal fields into json for human output
 	// TODO should we use e.Labels instead?
-	fields = filterSpecialFields(fields)
 	buf, err := c.fieldsEnc.EncodeEntry(zapcore.Entry{}, fields)
 	if err != nil {
 		return err
@@ -455,31 +414,12 @@ func funcNameForPC(pc uintptr) string {
 	return f.Name()
 }
 
-func filterFields(key string, fields []zapcore.Field) ([]zapcore.Field, *zapcore.Field) {
-	var f zapcore.Field
-
-	n := fields[:0]
-	for _, x := range fields {
-		if x.Key == key {
-			f = x
-		} else {
-			n = append(n, x)
-		}
+// customField returns a zapcore.Field that is skipped by other cores,
+// and only has special meaning to his core.
+func customField(key string, v interface{}) zapcore.Field {
+	return zapcore.Field{
+		Key:       key,
+		Type:      zapcore.SkipType,
+		Interface: v,
 	}
-
-	if f.Key == "" {
-		return n, nil
-	}
-
-	return n, &f
-}
-
-func filterSpecialFields(fields []zapcore.Field) []zapcore.Field {
-	n := fields[:0]
-	for _, x := range fields {
-		if !strings.HasPrefix(x.Key, "_") {
-			n = append(n, x)
-		}
-	}
-	return n
 }

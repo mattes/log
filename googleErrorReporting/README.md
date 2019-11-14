@@ -30,7 +30,3 @@ r := &http.Request{Method: "GET", Host: "example.com", RequestURI: "/"}
 logger.Error("Hello world", gerr.User("user123"), gerr.Request(r))
 ```
 
-## Restrictions
-
-* Field names starting with `_` are considered special and stripped before logged,
-  unless they have a special meaning to this core.

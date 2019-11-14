@@ -3,10 +3,8 @@ package googleErrorReporting
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"net/http"
 	"runtime"
-	"strings"
 
 	"cloud.google.com/go/errorreporting"
 	"github.com/mattes/errorstats"
@@ -23,12 +21,12 @@ const (
 
 // User adds user id to log
 func User(id string) zapcore.Field {
-	return zap.String(userFieldKey, id)
+	return customField(userFieldKey, id)
 }
 
 // Request adds http request to log
 func Request(r *http.Request) zapcore.Field {
-	return zap.Any(requestFieldKey, r)
+	return customField(requestFieldKey, r)
 }
 
 type Config struct {
@@ -132,26 +130,18 @@ func (c *core) Check(entry zapcore.Entry, checkedEntry *zapcore.CheckedEntry) *z
 func (c *core) Write(entry zapcore.Entry, fields []zapcore.Field) error {
 	r := errorreporting.Entry{}
 
-	var f *zapcore.Field
+	for _, f := range fields {
+		switch f.Key {
 
-	// find *http.Request in fields
-	fields, f = filterFields(requestFieldKey, fields)
-	if f != nil {
-		if v, ok := f.Interface.(*http.Request); ok {
-			r.Req = v
-		} else {
-			panic(fmt.Sprintf("expected *http.Request for field with key '%v'", requestFieldKey))
+		case requestFieldKey:
+			r.Req = f.Interface.(*http.Request)
+
+		case userFieldKey:
+			r.User = f.Interface.(string)
 		}
 	}
 
-	//find user id in fields
-	fields, f = filterFields(userFieldKey, fields)
-	if f != nil {
-		r.User = f.String
-	}
-
 	// marshal fields into json for human output
-	fields = filterSpecialFields(fields)
 	buf, err := c.fieldsEnc.EncodeEntry(zapcore.Entry{}, fields)
 	if err != nil {
 		return err
@@ -246,31 +236,12 @@ func trimStack(s []byte) []byte {
 	return append(s[:firstLine+1], stack...)
 }
 
-func filterFields(key string, fields []zapcore.Field) ([]zapcore.Field, *zapcore.Field) {
-	var f zapcore.Field
-
-	n := fields[:0]
-	for _, x := range fields {
-		if x.Key == key {
-			f = x
-		} else {
-			n = append(n, x)
-		}
+// customField returns a zapcore.Field that is skipped by other cores,
+// and only has special meaning to his core.
+func customField(key string, v interface{}) zapcore.Field {
+	return zapcore.Field{
+		Key:       key,
+		Type:      zapcore.SkipType,
+		Interface: v,
 	}
-
-	if f.Key == "" {
-		return n, nil
-	}
-
-	return n, &f
-}
-
-func filterSpecialFields(fields []zapcore.Field) []zapcore.Field {
-	n := fields[:0]
-	for _, x := range fields {
-		if !strings.HasPrefix(x.Key, "_") {
-			n = append(n, x)
-		}
-	}
-	return n
 }

@@ -34,5 +34,3 @@ logger.Error("Hello world", gsdr.Trace("trace123"))
   doesn't support changing the `Config.LogID` without creating a new logging client.
   Hence [zap#Logger.Named](https://godoc.org/go.uber.org/zap#Logger.Named) will be
   set as [logging#Entry.Label](https://godoc.org/cloud.google.com/go/logging#Entry).
-* Field names starting with `_` are considered special and stripped before logged,
-  unless they have a special meaning to this core.
