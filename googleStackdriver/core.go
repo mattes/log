@@ -30,18 +30,18 @@ var severity = map[zapcore.Level]logging.Severity{
 }
 
 const (
-	requestFieldKey                               = "_google_stackdriver_request"
-	requestSizeFieldKey                           = "_google_stackdriver_request_size"
-	requestStatusFieldKey                         = "_google_stackdriver_request_status"
-	requestResponseSizeFieldKey                   = "_google_stackdriver_request_response_size"
-	requestLatencyFieldKey                        = "_google_stackdriver_request_latency"
-	requestLocalIPFieldKey                        = "_google_stackdriver_request_local_ip"
-	requestRemoteIPFieldKey                       = "_google_stackdriver_request_remote_ip"
-	requestCacheHitFieldKey                       = "_google_stackdriver_request_cache_hit"
-	requestCacheValidatedWithOriginServerFieldKey = "_google_stackdriver_request_cache_validated_with_origin_server"
-	traceFieldKey                                 = "_google_stackdriver_trace"
-	traceSampledFieldKey                          = "_google_stackdriver_trace_sampled"
-	spanIDFieldKey                                = "_google_stackdriver_span_id"
+	requestFieldKey                               = "github.com/mattes/log/googleStackdriver/request"
+	requestSizeFieldKey                           = "github.com/mattes/log/googleStackdriver/requestSize"
+	requestStatusFieldKey                         = "github.com/mattes/log/googleStackdriver/requestStatus"
+	requestResponseSizeFieldKey                   = "github.com/mattes/log/googleStackdriver/requestResponseSize"
+	requestLatencyFieldKey                        = "github.com/mattes/log/googleStackdriver/requestLatency"
+	requestLocalIPFieldKey                        = "github.com/mattes/log/googleStackdriver/requestLocalIP"
+	requestRemoteIPFieldKey                       = "github.com/mattes/log/googleStackdriver/requestRemoteIP"
+	requestCacheHitFieldKey                       = "github.com/mattes/log/googleStackdriver/requestCacheHit"
+	requestCacheValidatedWithOriginServerFieldKey = "github.com/mattes/log/googleStackdriver/requestCacheValidatedWithOriginServer"
+	traceFieldKey                                 = "github.com/mattes/log/googleStackdriver/trace"
+	traceSampledFieldKey                          = "github.com/mattes/log/googleStackdriver/traceSampled"
+	spanIDFieldKey                                = "github.com/mattes/log/googleStackdriver/spanID"
 )
 
 func Request(r *http.Request) zapcore.Field {

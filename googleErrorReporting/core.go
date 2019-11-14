@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	userFieldKey    = "_google_error_reporting_user"
-	requestFieldKey = "_google_error_reporting_request"
+	userFieldKey    = "github.com/mattes/log/googleErrorReporting/user"
+	requestFieldKey = "github.com/mattes/log/googleErrorReporting/request"
 )
 
 // User adds user id to log
