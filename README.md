@@ -1,9 +1,9 @@
 # log [![GoDoc](https://godoc.org/github.com/mattes/log?status.svg)](https://godoc.org/github.com/mattes/log)
 
-This package mimics [stdlib/log](https://golang.org/pkg/log) and uses 
-[Uber's Zap](go.uber.org/zap) logging lib internally. 
+log acts as drop-in replacement for `std/log` and uses the power of
+[Uber's Zap](go.uber.org/zap) logging library internally. 
 
-It implements the following new Zap cores:
+It implements the following Zap cores:
 
   * [Google Cloud Error Reporting](/googleErrorReporting)
   * [Google Cloud Stackdriver Logging](/googleStackdriver)
@@ -13,8 +13,8 @@ It implements the following new Zap cores:
 
 ## Usage
 
-Importing without updating any defaults will use a __development__ setup. All
-logs are written to stderr.
+A __development__ setup is used by default. Similar to `std/log`.
+All logs are written to stderr.
 
 ```go
 import "github.com/mattes/log"
@@ -27,8 +27,8 @@ func main() {
 ```
 
 In __production__ the setup depends on where you want to ship your logs to.
-Here is an example that ships all logs to Google Stackdriver, and errors
-are send to Google Error Reporting as well.
+Here is an example that ships all logs to Google Stackdriver, as well
+as Google Error Reporting.
 
 ```go
 import (
