@@ -46,3 +46,10 @@ jobs:
         echo '${{secrets.GOOGLE_PROJECT_CREDS}}' > .credentials.json
         go test -mod vendor -v .
 
+
+    - name: Test Prometheus
+      working-directory: ./prometheus
+      run: |
+        go test -mod vendor -v .
+
+

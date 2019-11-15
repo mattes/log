@@ -8,6 +8,7 @@ It implements the following new Zap cores:
   * [Google Cloud Error Reporting](/googleErrorReporting)
   * [Google Cloud Stackdriver Logging](/googleStackdriver)
   * [Slack](/slack)
+  * [Prometheus](/prometheus)
 
 
 ## Usage
