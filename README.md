@@ -1,7 +1,7 @@
 # log [![GoDoc](https://godoc.org/github.com/mattes/log?status.svg)](https://godoc.org/github.com/mattes/log)
 
 log acts as drop-in replacement for `std/log` and uses the power of
-[Uber's Zap](go.uber.org/zap) logging library internally. 
+[Uber's Zap](https://github.com/uber-go/zap) logging library internally. 
 
 It implements the following Zap cores:
 
