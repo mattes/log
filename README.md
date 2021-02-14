@@ -32,7 +32,7 @@ as Google Error Reporting.
 
 ```go
 import (
-  "go.uber.org/zap/zap"
+  "go.uber.org/zap"
   "go.uber.org/zap/zapcore"
   "github.com/mattes/log"
   gerr "github.com/mattes/log/googleErrorReporting"
