@@ -18,7 +18,7 @@ jobs:
 
 
     - name: Test mattes/log
-      run: go test -mod vendor -v .
+      run: go test -v .
 
 
     - name: Test Slack
@@ -26,7 +26,7 @@ jobs:
         SLACK_URL: ${{ secrets.SLACK_URL }}
         SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
       working-directory: ./slack
-      run: go test -mod vendor -v .
+      run: go test -v .
 
 
     - name: Test Google Stackdriver
@@ -35,7 +35,7 @@ jobs:
       working-directory: ./googleStackdriver
       run: |
         echo '${{secrets.GOOGLE_PROJECT_CREDS}}' > .credentials.json
-        go test -mod vendor -v .
+        go test -v .
 
 
     - name: Test Google Error Reporting
@@ -44,12 +44,12 @@ jobs:
       working-directory: ./googleErrorReporting
       run: |
         echo '${{secrets.GOOGLE_PROJECT_CREDS}}' > .credentials.json
-        go test -mod vendor -v .
+        go test -v .
 
 
     - name: Test Prometheus
       working-directory: ./prometheus
       run: |
-        go test -mod vendor -v .
+        go test -v .
 
 

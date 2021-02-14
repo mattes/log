@@ -1,6 +1,6 @@
 module github.com/mattes/log/slack
 
-go 1.13
+go 1.15
 
 require (
 	github.com/mattes/errorstats v0.0.0-20191110073129-45b03e061d62

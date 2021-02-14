@@ -1,6 +1,6 @@
 module github.com/mattes/log/googleStackdriver
 
-go 1.13
+go 1.15
 
 require (
 	cloud.google.com/go v0.76.0
