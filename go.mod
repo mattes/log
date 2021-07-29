@@ -1,6 +1,6 @@
 module github.com/mattes/log
 
-go 1.15
+go 1.16
 
 require (
 	go.uber.org/multierr v1.6.0 // indirect
